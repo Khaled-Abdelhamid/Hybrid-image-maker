@@ -56,6 +56,7 @@
 \usepackage{times}
 \usepackage{booktabs}
 
+
 \frenchspacing
 \setlength{\parindent}{0cm} % Default is 15pt.
 \setlength{\parskip}{0.3cm plus1mm minus1mm}
@@ -307,4 +308,41 @@ def gen_hybrid_image_fft(image1, image2, cutoff_frequency):
 
 
 \end{lstlisting}
+\newpage
+
+\section{Results}
+The code worked perfectly in both spatial and FFT-based convolution.
+
+
+Here are the 2 images I used:
+
+low Frequencies
+\begin{figure}[h]
+\includegraphics{../results/low_frequencies}
+\label{fig:low frequencies}
+\end{figure}
+
+\newpage
+High Frequncies
+\begin{figure}[h]
+\includegraphics{../results/high_frequencies}
+\end{figure}
+
+\newpage
+Both added together
+\begin{figure}[h]
+	\includegraphics{../results/hybrid_image}
+\end{figure}
+
+
+\newpage
+And here it is on different scales
+\begin{figure}[h]
+	\includegraphics[scale=0.6]{../results/hybrid_image_scales}
+\end{figure}
+
+
+
+
+
 \end{document}
