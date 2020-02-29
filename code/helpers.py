@@ -32,7 +32,11 @@ def my_imfilter(image: np.ndarray, kernel: np.ndarray):
 
   return filtered_image
 
-def gen_hybrid_image(image1: np.ndarray, image2: np.ndarray, cutoff_frequency: float):
+
+
+
+
+def gen_hybrid_image(image1, image2, cutoff_frequency):
   """
    Inputs:
    - image1 -> The image from which to take the low frequencies.
@@ -52,21 +56,41 @@ def gen_hybrid_image(image1: np.ndarray, image2: np.ndarray, cutoff_frequency: f
   #     blur that works best will vary with different image pairs
   # generate a gaussian kernel with mean=0 and sigma = cutoff_frequency,
   # Just a heads up but think how you can generate 2D gaussian kernel from 1D gaussian kernel
-  kernel = None
+
+  ksize = 15
+  sigma = cutoff_frequency
+
+  x = np.arange(-ksize//2, ksize//2+1)
+  gx = np.exp(-(x)**2/(2*sigma**2))
+  g = np.outer(gx, gx)
+  g /= np.sum(g)
+  kernel = g
   
   # Your code here:
-  low_frequencies = None # Replace with your implementation
+  low_frequencies = np.zeros(image1.shape)
+  low_frequencies[:,:,0] = correlate2d(image1[:,:,0], kernel, 'same') # Replace with your implementation
+  low_frequencies[:,:,1] = correlate2d(image1[:,:,1], kernel, 'same') # Replace with your implementation
+  low_frequencies[:,:,2] = correlate2d(image1[:,:,2], kernel, 'same') # Replace with your implementation
 
   # (2) Remove the low frequencies from image2. The easiest way to do this is to
   #     subtract a blurred version of image2 from the original version of image2.
   #     This will give you an image centered at zero with negative values.
   # Your code here #
-  high_frequencies = None # Replace with your implementation
+  low_frequencies2 = np.zeros(image2.shape)
+  low_frequencies2[:,:,0] = correlate2d(image2[:,:,0], kernel,'same')
+  low_frequencies2[:,:,1] = correlate2d(image2[:,:,1], kernel,'same')
+  low_frequencies2[:,:,2] = correlate2d(image2[:,:,2], kernel,'same')
+  high_frequencies = image2 - low_frequencies2 # Replace with your implementation
+
+
+  # print(np.sum(high_frequencies<0))
 
   # (3) Combine the high frequencies and low frequencies
   # Your code here #
-  hybrid_image = None # Replace with your implementation
+  hybrid_image = low_frequencies/2 + high_frequencies/2 # Replace with your implementation
 
+  np.clip(high_frequencies,0,1)
+  np.clip(hybrid_image,0,1)
   # (4) At this point, you need to be aware that values larger than 1.0
   # or less than 0.0 may cause issues in the functions in Python for saving
   # images to disk. These are called in proj1_part2 after the call to 
@@ -77,9 +101,13 @@ def gen_hybrid_image(image1: np.ndarray, image2: np.ndarray, cutoff_frequency: f
   # and ranges of your results. This can be performed as test for the code during development or even
   # at production!
 
+
+  # np.clip(low_frequencies,0,1)
+  # np.clip(high_frequencies,0,1)
+  # np.clip(hybrid_image,0,1)
   return low_frequencies, high_frequencies, hybrid_image
 
-def vis_hybrid_image(hybrid_image: np.ndarray):
+def vis_hybrid_image(hybrid_image):
   """
   Visualize a hybrid image by progressively downsampling the image and
   concatenating all of the images together.
