@@ -67,7 +67,7 @@ def gen_hybrid_image(image1, image2, cutoff_frequency):
   kernel = g
   
   # Your code here:
-  low_frequencies = np.zeros(image1.shape)
+  low_frequencies = np.zeros(image1.shape, dtype=np.float32)
   low_frequencies[:,:,0] = correlate2d(image1[:,:,0], kernel, 'same') # Replace with your implementation
   low_frequencies[:,:,1] = correlate2d(image1[:,:,1], kernel, 'same') # Replace with your implementation
   low_frequencies[:,:,2] = correlate2d(image1[:,:,2], kernel, 'same') # Replace with your implementation
@@ -76,7 +76,7 @@ def gen_hybrid_image(image1, image2, cutoff_frequency):
   #     subtract a blurred version of image2 from the original version of image2.
   #     This will give you an image centered at zero with negative values.
   # Your code here #
-  low_frequencies2 = np.zeros(image2.shape)
+  low_frequencies2 = np.zeros(image2.shape, dtype=np.float32)
   low_frequencies2[:,:,0] = correlate2d(image2[:,:,0], kernel,'same')
   low_frequencies2[:,:,1] = correlate2d(image2[:,:,1], kernel,'same')
   low_frequencies2[:,:,2] = correlate2d(image2[:,:,2], kernel,'same')
@@ -89,8 +89,8 @@ def gen_hybrid_image(image1, image2, cutoff_frequency):
   # Your code here #
   hybrid_image = low_frequencies/2 + high_frequencies/2 # Replace with your implementation
 
-  np.clip(high_frequencies,0,1)
-  np.clip(hybrid_image,0,1)
+  high_frequencies = np.clip(high_frequencies,-1.0,1.0)
+  hybrid_image = np.clip(hybrid_image,0,1)
   # (4) At this point, you need to be aware that values larger than 1.0
   # or less than 0.0 may cause issues in the functions in Python for saving
   # images to disk. These are called in proj1_part2 after the call to 
@@ -101,6 +101,8 @@ def gen_hybrid_image(image1, image2, cutoff_frequency):
   # and ranges of your results. This can be performed as test for the code during development or even
   # at production!
 
+
+  
 
   # np.clip(low_frequencies,0,1)
   # np.clip(high_frequencies,0,1)

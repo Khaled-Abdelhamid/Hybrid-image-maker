@@ -50,7 +50,10 @@ plt.figure(figsize=(20, 20))
 plt.imshow(vis)
 # plt.show()
 
+high_frequencies = np.clip(high_frequencies,-1,0.5)
+
+
 save_image('../results/low_frequencies.jpg', low_frequencies)
-save_image('../results/high_frequencies.jpg', high_frequencies)
+save_image('../results/high_frequencies.jpg', high_frequencies+0.5)
 save_image('../results/hybrid_image.jpg', hybrid_image)
 save_image('../results/hybrid_image_scales.jpg', vis)
