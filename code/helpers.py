@@ -9,14 +9,7 @@ from skimage.transform import rescale
 from scipy.signal import convolve2d, correlate2d
 
 
-<<<<<<< HEAD
-from scipy import fftpack
-
-
-def my_imfilter(image, kernel):
-=======
 def my_imfilter(image: np.ndarray, kernel: np.ndarray,mode: str ='zeros'):
->>>>>>> 502304407f604539a7006368b165efc12b0203c7
   """
   Your function should meet the requirements laid out on the project webpage.
   Apply a filter to an image. Return the filtered image.
