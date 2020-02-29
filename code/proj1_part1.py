@@ -7,14 +7,15 @@ from skimage.transform import rescale
 import numpy as np
 from numpy import pi, exp, sqrt
 import matplotlib.pyplot as plt
-from helpers import load_image, save_image, my_imfilter
+# from helpers.py import load_image, save_image, my_imfilter
+from helpers import *
 
 resultsDir = '..' + os.sep + 'results'
 if not os.path.exists( resultsDir ):
     os.mkdir( resultsDir )
 
 test_image = load_image('../data/cat.bmp')
-test_image = rescale(test_image, 0.7, mode='reflect')
+test_image = rescale(test_image, 0.7, mode='reflect', multichannel = True)
 
 '''
 Identity filter

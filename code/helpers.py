@@ -48,7 +48,8 @@ def my_imfilter(image: np.ndarray, kernel: np.ndarray,mode: str ='zeros'):
      paddedImg=np.pad(image,[(hpad,hpad),(wpad,wpad)],mode=md)
   else:
     paddedImg=np.pad(image,[(hpad,hpad),(wpad,wpad),(0,0)],mode='constant')
-  for dim in range(0,idim):
+    dim_No=image.shape[2]
+  for dim in range(0,dim_No):
     for i in range(0,ih):
       for j in range(0,iw):
           cropped=paddedImg[i:i+kh,j:j+kw,dim]
