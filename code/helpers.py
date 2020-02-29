@@ -7,13 +7,7 @@ from numpy import pi, exp, sqrt
 from skimage import io, img_as_ubyte, img_as_float32
 from skimage.transform import rescale
 
-
-
-# I will just add this so that I am able to work independently without using imfilter funtion (just to work in parallel)
-from scipy.signal import convolve2d, correlate2d
-
-
-def my_imfilter(image, filter):
+def my_imfilter(image: np.ndarray, kernel: np.ndarray):
   """
   Your function should meet the requirements laid out on the project webpage.
   Apply a filter to an image. Return the filtered image.
@@ -25,6 +19,10 @@ def my_imfilter(image, filter):
   Errors if:
   - filter has any even dimension -> raise an Exception with a suitable error message.
   """
+  assert kernel.ndim == 2
+  x,y=kernel.shape
+  assert (x%2) !=0 and (y%2) !=0
+
   filtered_image = np.asarray([0])
 
   ##################
