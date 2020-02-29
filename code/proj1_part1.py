@@ -1,13 +1,9 @@
-# Project Image Filtering and Hybrid Images - Tests on my_imfilter function
-# Based on previous and current work
-# by James Hays for CSCI 1430 @ Brown and
-# CS 4495/6476 @ Georgia Tech
+
 import os
 from skimage.transform import rescale
 import numpy as np
 from numpy import pi, exp, sqrt
 import matplotlib.pyplot as plt
-# from helpers.py import load_image, save_image, my_imfilter
 from helpers import *
 
 resultsDir = '..' + os.sep + 'results'

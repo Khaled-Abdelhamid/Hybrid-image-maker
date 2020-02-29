@@ -38,7 +38,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[11pt]{article}
-
+\usepackage{amsmath,amssymb,tikz}
+\usetikzlibrary{arrows.meta,tikzmark}
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[colorlinks = true,
@@ -58,7 +59,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \lhead{Project 1 Questions}
-\rhead{CSCI 1430}
+\rhead{CIE 552}
 \rfoot{\thepage}
 
 \date{}
@@ -71,22 +72,18 @@
 \vspace{-3cm}
 \thispagestyle{fancy}
 
-\section*{Instructions}
-\begin{itemize}
-  \item 4 questions.
-  \item Write code where appropriate.
-  \item Feel free to include images or equations.
-  \item Please make this document anonymous.
-  \item On upload, \textbf{Gradescope will ask you to assign question numbers to your pages}. Making each question end with a page break after your answer is a good way to ease this process.
-\end{itemize}
-
 \section*{Questions}
 
 \paragraph{Q1:} Explicitly describe image convolution: the input, the transformation, and the output. Why is it useful for computer vision?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{A1:} Your answer here.
+\paragraph{A1:} Convolution is the core operation in image and signal processing.It is mainly used to apply various filter types over images.Its importance comes from the fact that it has direct connection with the frequency domain of image ,as the convolution operation in the spacial domain can be converted into multiplication in the frequency domain and vice versa.The input of the convolution is two images with any size. the transformation itself occurs by the following equation.
+\begin{equation}
+(f\ast g)[n]=\sum^{\infty}_{m \rightarrow \infty} f[m]g[n-m]
+\label{eq:one}
+\end{equation}
 
+The  output of  convolution is a single value for each iteration in the summation , so for an image with convolutional filter , each new pixel in the filtered image will be affected by the pixels next to it.It is also worth mentioning that the size of the filtered image is slightly less than the original one due to the pixels in the borders,hence we need padding to make the output filter with the same dimension as the original one.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

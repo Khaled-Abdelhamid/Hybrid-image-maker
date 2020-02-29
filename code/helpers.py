@@ -1,7 +1,3 @@
-# Project Image Filtering and Hybrid Images Stencil Code
-# Based on previous and current work
-# by James Hays for CSCI 1430 @ Brown and
-# CS 4495/6476 @ Georgia Tech
 import numpy as np
 from numpy import pi, exp, sqrt
 from skimage import io, img_as_ubyte, img_as_float32
@@ -12,8 +8,9 @@ from scipy import fftpack
 
 def my_imfilter(image, kernel,mode ='zeros'):
   """
-  Your function should meet the requirements laid out on the project webpage.
-  Apply a filter to an image. Return the filtered image.
+ This is a fundamental image processing tool (see Chapter 3.2 of Szeliski to learn about image filtering, specifically about linear filtering)
+ . Python’s scipy, openCV and scikit-image have efficient functions to perform image filtering, but we will write our own from
+ scratch via ​convolution​.
   Inputs:
   - image -> numpy nd-array of dim (m, n, c) for RGB images or numpy nd-array of dim (m, n) for gray scale images
   - filter -> numpy nd-array of odd dim (k, l)
@@ -79,7 +76,7 @@ def gen_hybrid_image(image1, image2, cutoff_frequency):
 
   # Steps:
   # (1) Remove the high frequencies from image1 by blurring it. The amount of
-  #     blur that works best will vary with different image pairs
+  # blur that works best will vary with different image pairs
   # generate a gaussian kernel with mean=0 and sigma = cutoff_frequency,
   # Just a heads up but think how you can generate 2D gaussian kernel from 1D gaussian kernel
 
@@ -106,7 +103,7 @@ def gen_hybrid_image(image1, image2, cutoff_frequency):
   # (2) Remove the low frequencies from image2. The easiest way to do this is to
   #     subtract a blurred version of image2 from the original version of image2.
   #     This will give you an image centered at zero with negative values.
-  # Your code here #
+  
   low_frequencies2 = np.zeros(image2.shape, dtype=np.float32)
   
   for i in range(image1.shape[2]):
@@ -122,7 +119,7 @@ def gen_hybrid_image(image1, image2, cutoff_frequency):
   # print(np.sum(high_frequencies<0))
 
   # (3) Combine the high frequencies and low frequencies
-  # Your code here #
+  
   hybrid_image = low_frequencies/2 + high_frequencies/2 # Replace with your implementation
 
   high_frequencies = np.clip(high_frequencies,-1.0,1.0)
