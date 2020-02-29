@@ -7,7 +7,7 @@ from numpy import pi, exp, sqrt
 from skimage import io, img_as_ubyte, img_as_float32
 from skimage.transform import rescale
 
-def my_imfilter(image: np.ndarray, filter: np.ndarray):
+def my_imfilter(image: np.ndarray, kernel: np.ndarray):
   """
   Your function should meet the requirements laid out on the project webpage.
   Apply a filter to an image. Return the filtered image.
@@ -19,6 +19,10 @@ def my_imfilter(image: np.ndarray, filter: np.ndarray):
   Errors if:
   - filter has any even dimension -> raise an Exception with a suitable error message.
   """
+  assert kernel.ndim == 2
+  x,y=kernel.shape
+  assert (x%2) !=0 and (y%2) !=0
+
   filtered_image = np.asarray([0])
 
   ##################
