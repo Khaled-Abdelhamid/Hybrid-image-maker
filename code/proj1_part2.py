@@ -36,12 +36,21 @@ plt.imshow((image2*255).astype(np.uint8))
 # cutoff_frequency is the standard deviation, in pixels, of the Gaussian#
 # blur that will remove high frequencies. You may tune this per image pair
 # to achieve better results.
+
+
 cutoff_frequency = 10
-# low_frequencies, high_frequencies, hybrid_image = gen_hybrid_image(image1, image2, cutoff_frequency)
-low_frequencies, high_frequencies, hybrid_image = gen_hybrid_image_fft(image1, image2, cutoff_frequency)
+low_frequencies, high_frequencies, hybrid_image = gen_hybrid_image(image1, image2, cutoff_frequency)
+
+
+###########################################################################################
+# Uncomment the following line to see the hybrid image generated using fft based convolution
+
+# low_frequencies, high_frequencies, hybrid_image = gen_hybrid_image_fft(image1, image2, cutoff_frequency)
+
+###########################################################################################
+
 
 ## Visualize and save outputs ##
-
 plt.figure()
 plt.imshow(((low_frequencies)*255).astype(np.uint8))
 

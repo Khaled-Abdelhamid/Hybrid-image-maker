@@ -9,10 +9,14 @@ from skimage.transform import rescale
 from scipy.signal import convolve2d, correlate2d
 
 
+<<<<<<< HEAD
 from scipy import fftpack
 
 
 def my_imfilter(image, kernel):
+=======
+def my_imfilter(image: np.ndarray, kernel: np.ndarray,mode: str ='zeros'):
+>>>>>>> 502304407f604539a7006368b165efc12b0203c7
   """
   Your function should meet the requirements laid out on the project webpage.
   Apply a filter to an image. Return the filtered image.
@@ -24,16 +28,39 @@ def my_imfilter(image, kernel):
   Errors if:
   - filter has any even dimension -> raise an Exception with a suitable error message.
   """
-  assert kernel.ndim == 2
-  x,y=kernel.shape
-  assert (x%2) !=0 and (y%2) !=0
+  
+  kh,kw=kernel.shape
+  ih=image.shape[0]
+  iw=image.shape[1]
 
-  filtered_image = np.asarray([0])
+  kdim=kernel.ndim
+  idim=image.ndim
 
-  ##################
-  # Your code here #
-  raise NotImplementedError('my_imfilter function in helpers.py needs to be implemented')
-  ##################
+  assert kdim == 2 , "kernel dimensions must be exaxctly two"
+  assert idim == 2 or idim ==3 , "image dimensions must be exaxctly two or three"
+  assert (kh%2) !=0 and (kw%2) !=0 , "all kernel dimensions must be odd"
+
+  hpad:int=(kh-1)//2
+  wpad:int=(kw-1)//2
+
+  filtered_image = np.zeros_like(image)
+
+  if mode=='zeros':
+    md='constant'
+  elif mode=='reflect':
+    md='reflect'
+  else:
+    raise   Exception('the mode {} is not defined \n "zeros" and "reflect are available"'.format(x))
+
+  if idim==2:
+     paddedImg=np.pad(image,[(hpad,hpad),(wpad,wpad)],mode=md)
+  else:
+    paddedImg=np.pad(image,[(hpad,hpad),(wpad,wpad),(0,0)],mode='constant')
+  for dim in range(0,idim):
+    for i in range(0,ih):
+      for j in range(0,iw):
+          cropped=paddedImg[i:i+kh,j:j+kw,dim]
+          filtered_image[i,j,dim]=np.sum(np.multiply(kernel,cropped))
 
   return filtered_image
 
@@ -70,19 +97,19 @@ def gen_hybrid_image(image1, image2, cutoff_frequency):
   kernel = g
   
   # Your code here:
-  low_frequencies = np.zeros(image1.shape, dtype=np.float32)
-  low_frequencies[:,:,0] = correlate2d(image1[:,:,0], kernel, 'same') # Replace with your implementation
-  low_frequencies[:,:,1] = correlate2d(image1[:,:,1], kernel, 'same') # Replace with your implementation
-  low_frequencies[:,:,2] = correlate2d(image1[:,:,2], kernel, 'same') # Replace with your implementation
+  low_frequencies = np.zeros(image1.shape)
+  low_frequencies[:,:,0] = my_imfilter(image1[:,:,0], kernel, 'zeros') # Replace with your implementation
+  low_frequencies[:,:,1] = my_imfilter(image1[:,:,1], kernel, 'zeros') # Replace with your implementation
+  low_frequencies[:,:,2] = my_imfilter(image1[:,:,2], kernel, 'zeros') # Replace with your implementation
 
   # (2) Remove the low frequencies from image2. The easiest way to do this is to
   #     subtract a blurred version of image2 from the original version of image2.
   #     This will give you an image centered at zero with negative values.
   # Your code here #
-  low_frequencies2 = np.zeros(image2.shape, dtype=np.float32)
-  low_frequencies2[:,:,0] = correlate2d(image2[:,:,0], kernel,'same')
-  low_frequencies2[:,:,1] = correlate2d(image2[:,:,1], kernel,'same')
-  low_frequencies2[:,:,2] = correlate2d(image2[:,:,2], kernel,'same')
+  low_frequencies2 = np.zeros(image2.shape)
+  low_frequencies2[:,:,0] = my_imfilter(image2[:,:,0], kernel,'zeros')
+  low_frequencies2[:,:,1] = my_imfilter(image2[:,:,1], kernel,'zeros')
+  low_frequencies2[:,:,2] = my_imfilter(image2[:,:,2], kernel,'zeros')
   high_frequencies = image2 - low_frequencies2 # Replace with your implementation
 
 
