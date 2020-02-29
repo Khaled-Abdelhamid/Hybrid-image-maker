@@ -85,26 +85,36 @@ def gen_hybrid_image(image1, image2, cutoff_frequency):
   ksize = 15
   sigma = cutoff_frequency
 
+
+  # Here I do outer product of 2 gaussian vectors to get 2D kernel
   x = np.arange(-ksize//2, ksize//2+1)
   gx = np.exp(-(x)**2/(2*sigma**2))
   g = np.outer(gx, gx)
   g /= np.sum(g)
   kernel = g
   
+
+  
   # Your code here:
+  # looping over the channels of the image to apply the gaussian kernel
   low_frequencies = np.zeros(image1.shape, dtype=np.float32)
-  low_frequencies[:,:,0] = correlate2d(image1[:,:,0], kernel, 'same') # Replace with your implementation
-  low_frequencies[:,:,1] = correlate2d(image1[:,:,1], kernel, 'same') # Replace with your implementation
-  low_frequencies[:,:,2] = correlate2d(image1[:,:,2], kernel, 'same') # Replace with your implementation
+  
+  for i in range(image1.shape[2]):
+    low_frequencies[:,:,i] = correlate2d(image1[:,:,i], kernel, 'same') # Replace with your implementation
 
   # (2) Remove the low frequencies from image2. The easiest way to do this is to
   #     subtract a blurred version of image2 from the original version of image2.
   #     This will give you an image centered at zero with negative values.
   # Your code here #
   low_frequencies2 = np.zeros(image2.shape, dtype=np.float32)
-  low_frequencies2[:,:,0] = correlate2d(image2[:,:,0], kernel,'same')
-  low_frequencies2[:,:,1] = correlate2d(image2[:,:,1], kernel,'same')
-  low_frequencies2[:,:,2] = correlate2d(image2[:,:,2], kernel,'same')
+  
+  for i in range(image1.shape[2]):
+    low_frequencies2[:,:,i] = correlate2d(image2[:,:,i], kernel,'same')
+
+
+
+
+
   high_frequencies = image2 - low_frequencies2 # Replace with your implementation
 
 
@@ -177,22 +187,20 @@ def gen_hybrid_image_fft(image1, image2, cutoff_frequency):
   kernel = g
 
   low_freqs = np.zeros(image1.shape)
-  low_freqs[:,:,0] = fft_convolve(image1[:,:,0], kernel)
-  low_freqs[:,:,1] = fft_convolve(image1[:,:,1], kernel)
-  low_freqs[:,:,2] = fft_convolve(image1[:,:,2], kernel)
+  for i in range(image1.shape[2]):
+    low_freqs[:,:,i] = fft_convolve(image1[:,:,i], kernel)
 
 
 
   low_freqs2 = np.zeros(image2.shape)
-  low_freqs2[:,:,0] = fft_convolve(image2[:,:,0], kernel)
-  low_freqs2[:,:,1] = fft_convolve(image2[:,:,1], kernel)
-  low_freqs2[:,:,2] = fft_convolve(image2[:,:,2], kernel)
+  for i in range(image1.shape[2]):
+    low_freqs2[:,:,i] = fft_convolve(image2[:,:,i], kernel)
+ 
   high_freqs = image2 - low_freqs2
-
+  
   hybrid_image = low_freqs/2 + high_freqs/2 # Replace with your implementation
 
-  high_freqs = np.clip(high_freqs,-1.0,1.0)
-
+  high_freqs = np.clip(high_freqs,-1.0,0.5)
   hybrid_image = np.clip(hybrid_image,0,1)
 
   return low_freqs, high_freqs, hybrid_image
