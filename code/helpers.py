@@ -149,6 +149,7 @@ def gen_hybrid_image(image1, image2, cutoff_frequency):
 
 #######################################################################################################################
 
+# I used the fft_convolve in lab_3 as a helper function to do fft_based convolution on each channel of the image
 def fft_convolve(img, filter):
   img_in_freq = fftpack.fft2(img)
 
@@ -187,6 +188,8 @@ def gen_hybrid_image_fft(image1, image2, cutoff_frequency):
   g /= np.sum(g)
   kernel = g
 
+
+# Applyingthe fft convolution on each channel
   low_freqs = np.zeros(image1.shape)
   for i in range(image1.shape[2]):
     low_freqs[:,:,i] = fft_convolve(image1[:,:,i], kernel)
@@ -197,8 +200,12 @@ def gen_hybrid_image_fft(image1, image2, cutoff_frequency):
   for i in range(image1.shape[2]):
     low_freqs2[:,:,i] = fft_convolve(image2[:,:,i], kernel)
  
+
+ # getting only high freqs of image2
   high_freqs = image2 - low_freqs2
   
+
+# combining the low freqs and high freqs
   hybrid_image = low_freqs/2 + high_freqs/2 # Replace with your implementation
 
   high_freqs = np.clip(high_freqs,-1.0,0.5)
