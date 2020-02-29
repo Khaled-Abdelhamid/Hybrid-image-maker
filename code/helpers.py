@@ -7,8 +7,6 @@ from numpy import pi, exp, sqrt
 from skimage import io, img_as_ubyte, img_as_float32
 from skimage.transform import rescale
 from scipy.signal import convolve2d, correlate2d
-
-
 from scipy import fftpack
 
 
@@ -24,18 +22,19 @@ def my_imfilter(image, kernel,mode ='zeros'):
   Errors if:
   - filter has any even dimension -> raise an Exception with a suitable error message.
   """
-  
+  # get the kernel dimesnsions in kh and kw
   kh,kw=kernel.shape
+# get the hight and width only as the third dimension may exist or not
   ih=image.shape[0]
   iw=image.shape[1]
-
+# get the number of dimsensions for both the kernel and the image
   kdim=kernel.ndim
   idim=image.ndim
 
   assert kdim == 2 , "kernel dimensions must be exaxctly two"
   assert idim == 2 or idim ==3 , "image dimensions must be exaxctly two or three"
   assert (kh%2) !=0 and (kw%2) !=0 , "all kernel dimensions must be odd"
-
+# this foarmula calculates how many rows do i need to put so that i can make proper padding
   hpad=(kh-1)//2
   wpad=(kw-1)//2
 
@@ -47,15 +46,17 @@ def my_imfilter(image, kernel,mode ='zeros'):
     md='reflect'
   else:
     raise   Exception('the mode {} is not defined \n "zeros" and "reflect are available"'.format(x))
-
+# change the padding function according to the input image
   if idim==2:
      paddedImg=np.pad(image,[(hpad,hpad),(wpad,wpad)],mode=md)
   else:
     paddedImg=np.pad(image,[(hpad,hpad),(wpad,wpad),(0,0)],mode='constant')
     dim_No=image.shape[2]
+# apply convolution over the number of channels
   for dim in range(0,dim_No):
     for i in range(0,ih):
       for j in range(0,iw):
+        # multiply the kernel with the cropped part of the image and then sum the result
           cropped=paddedImg[i:i+kh,j:j+kw,dim]
           filtered_image[i,j,dim]=np.sum(np.multiply(kernel,cropped))
 
@@ -227,7 +228,7 @@ def vis_hybrid_image(hybrid_image):
     output = np.hstack((output, np.ones((original_height, padding, num_colors),
                                         dtype=np.float32)))
     # downsample image
-    cur_image = rescale(cur_image, scale_factor, mode='reflect')
+    cur_image = rescale(cur_image, scale_factor, mode='reflect',multichannel = True)
     # pad the top to append to the output
     pad = np.ones((original_height-cur_image.shape[0], cur_image.shape[1],
                    num_colors), dtype=np.float32)
