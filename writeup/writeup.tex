@@ -192,4 +192,119 @@ My results are summarized in Table~\ref{tab:table1}.
     \label{tab:table1}
 \end{table}
 
+
+
+\newpage
+\section*{Generation of Hybrid Image}
+In this part we are trying to add a low-pass filtered image and then add it to a high-pass filtered image of the same shape. This was implemented using 2 ways of filtering the first used the spatial convolution of the filter and the latter was done in frequency domain. The good thing of the frequency domain thing is that the convolution becomes a normal multiplication. 
+
+The kernel used is a Gaussian kernel with size 15x15 and $\sigma = 10$.
+This is how the low-pass filtered image was obtained and the high-filtered images was obtained by subtracting the low frequencies from the original image and this kept only high frequencies. 
+
+
+
+Here is a code snippet of the function implemented 2 times one with spatial convolution and the second using FFT-based convolution
+
+
+\begin{lstlisting}
+
+def gen_hybrid_image(image1, image2, cutoff_frequency):
+	
+	assert image1.shape == image2.shape
+	
+	ksize = 15
+	sigma = cutoff_frequency
+	
+	
+	# Here I do outer product of 2 gaussian vectors to get 2D kernel
+	x = np.arange(-ksize//2, ksize//2+1)
+	gx = np.exp(-(x)**2/(2*sigma**2))
+	g = np.outer(gx, gx)
+	g /= np.sum(g)
+	kernel = g
+	
+	
+	
+	# Your code here:
+	# looping over the channels of the image to apply the gaussian kernel
+	low_frequencies = np.zeros(image1.shape, dtype=np.float32)
+	
+	for i in range(image1.shape[2]):
+	low_frequencies[:,:,i] = correlate2d(image1[:,:,i], kernel, 'same') # Replace with your implementation
+	
+	# (2) Remove the low frequencies from image2. The easiest way to do this is to
+	#     subtract a blurred version of image2 from the original version of image2.
+	#     This will give you an image centered at zero with negative values.
+	
+	low_frequencies2 = np.zeros(image2.shape, dtype=np.float32)
+	
+	for i in range(image1.shape[2]):
+	low_frequencies2[:,:,i] = correlate2d(image2[:,:,i], kernel,'same')
+	
+	
+	
+	
+	
+	high_frequencies = image2 - low_frequencies2 # Replace with your implementation
+	
+	
+	# print(np.sum(high_frequencies<0))
+	
+	# (3) Combine the high frequencies and low frequencies
+	
+	hybrid_image = low_frequencies/2 + high_frequencies/2 # Replace with your implementation
+	
+	high_frequencies = np.clip(high_frequencies,-1.0,1.0)
+	hybrid_image = np.clip(hybrid_image,0,1)
+
+	# np.clip(low_frequencies,0,1)
+	# np.clip(high_frequencies,0,1)
+	# np.clip(hybrid_image,0,1)
+	return low_frequencies, high_frequencies, hybrid_image
+
+
+\end{lstlisting}
+
+\newpage
+	
+\begin{lstlisting}
+def gen_hybrid_image_fft(image1, image2, cutoff_frequency):
+	assert image1.shape == image2.shape
+	
+	ksize = 15
+	sigma = cutoff_frequency
+	
+	x = np.arange(-ksize//2, ksize//2+1)
+	gx = np.exp(-(x)**2/(2*sigma**2))
+	g = np.outer(gx, gx)
+	g /= np.sum(g)
+	kernel = g
+	
+	
+	# Applyingthe fft convolution on each channel
+	low_freqs = np.zeros(image1.shape)
+	for i in range(image1.shape[2]):
+	low_freqs[:,:,i] = fft_convolve(image1[:,:,i], kernel)
+	
+	
+	
+	low_freqs2 = np.zeros(image2.shape)
+	for i in range(image1.shape[2]):
+	low_freqs2[:,:,i] = fft_convolve(image2[:,:,i], kernel)
+	
+	
+	# getting only high freqs of image2
+	high_freqs = image2 - low_freqs2
+	
+	
+	# combining the low freqs and high freqs
+	hybrid_image = low_freqs/2 + high_freqs/2 # Replace with your implementation
+	
+	high_freqs = np.clip(high_freqs,-1.0,0.5)
+	hybrid_image = np.clip(hybrid_image,0,1)
+	
+	return low_freqs, high_freqs, hybrid_image
+
+
+\end{lstlisting}
 \end{document}
