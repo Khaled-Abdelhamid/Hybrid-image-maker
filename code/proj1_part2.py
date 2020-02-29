@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from helpers import vis_hybrid_image, load_image, save_image, my_imfilter, gen_hybrid_image
+from helpers import *
 
 # Before trying to construct hybrid images, it is suggested that you
 # implement my_imfilter in helpers.py and then debug it using proj1_part1.py
@@ -36,9 +37,11 @@ plt.imshow((image2*255).astype(np.uint8))
 # blur that will remove high frequencies. You may tune this per image pair
 # to achieve better results.
 cutoff_frequency = 10
-low_frequencies, high_frequencies, hybrid_image = gen_hybrid_image(image1, image2, cutoff_frequency)
+# low_frequencies, high_frequencies, hybrid_image = gen_hybrid_image(image1, image2, cutoff_frequency)
+low_frequencies, high_frequencies, hybrid_image = gen_hybrid_image_fft(image1, image2, cutoff_frequency)
 
 ## Visualize and save outputs ##
+
 plt.figure()
 plt.imshow(((low_frequencies)*255).astype(np.uint8))
 
@@ -48,7 +51,7 @@ plt.imshow(((high_frequencies+0.5)*255).astype(np.uint8))
 vis = vis_hybrid_image(hybrid_image)
 plt.figure(figsize=(20, 20))
 plt.imshow(vis)
-# plt.show()
+plt.show()
 
 high_frequencies = np.clip(high_frequencies,-1,0.5)
 

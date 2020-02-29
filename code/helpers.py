@@ -6,8 +6,13 @@ import numpy as np
 from numpy import pi, exp, sqrt
 from skimage import io, img_as_ubyte, img_as_float32
 from skimage.transform import rescale
+from scipy.signal import convolve2d, correlate2d
 
-def my_imfilter(image: np.ndarray, kernel: np.ndarray):
+
+from scipy import fftpack
+
+
+def my_imfilter(image, kernel):
   """
   Your function should meet the requirements laid out on the project webpage.
   Apply a filter to an image. Return the filtered image.
@@ -31,8 +36,6 @@ def my_imfilter(image: np.ndarray, kernel: np.ndarray):
   ##################
 
   return filtered_image
-
-
 
 
 
@@ -108,6 +111,73 @@ def gen_hybrid_image(image1, image2, cutoff_frequency):
   # np.clip(high_frequencies,0,1)
   # np.clip(hybrid_image,0,1)
   return low_frequencies, high_frequencies, hybrid_image
+
+
+
+#######################################################################################################################
+
+def fft_convolve(img, filter):
+  img_in_freq = fftpack.fft2(img)
+
+  filter_in_freq = fftpack.fft2(filter, img.shape)
+  filtered_img_in_freq = np.multiply(img_in_freq, filter_in_freq)
+  filtered_img = fftpack.ifft2(filtered_img_in_freq)
+
+  img_in_freq_domain = fftpack.fftshift(np.log(np.abs(img_in_freq)+1))
+  img_in_freq_domain /= img_in_freq_domain.max() - img_in_freq_domain.min()
+  
+  filter_in_freq_domain = fftpack.fftshift(np.log(np.abs(filter_in_freq)+1))
+  filter_in_freq_domain /= filter_in_freq_domain.max() - filter_in_freq_domain.min()
+  
+  filtered_img_in_freq_domain = fftpack.fftshift(np.log(np.abs(filtered_img_in_freq)+1))
+  filtered_img_in_freq_domain /= filtered_img_in_freq_domain.max() - filtered_img_in_freq_domain.min()
+  
+  filtered_img = np.abs(filtered_img)
+  filtered_img = (filtered_img - filtered_img.min()) / (filtered_img.max() - filtered_img.min())
+
+  return filtered_img
+
+
+
+
+
+
+def gen_hybrid_image_fft(image1, image2, cutoff_frequency):
+  assert image1.shape == image2.shape
+
+  ksize = 15
+  sigma = cutoff_frequency
+
+  x = np.arange(-ksize//2, ksize//2+1)
+  gx = np.exp(-(x)**2/(2*sigma**2))
+  g = np.outer(gx, gx)
+  g /= np.sum(g)
+  kernel = g
+
+  low_freqs = np.zeros(image1.shape)
+  low_freqs[:,:,0] = fft_convolve(image1[:,:,0], kernel)
+  low_freqs[:,:,1] = fft_convolve(image1[:,:,1], kernel)
+  low_freqs[:,:,2] = fft_convolve(image1[:,:,2], kernel)
+
+
+
+  low_freqs2 = np.zeros(image2.shape)
+  low_freqs2[:,:,0] = fft_convolve(image2[:,:,0], kernel)
+  low_freqs2[:,:,1] = fft_convolve(image2[:,:,1], kernel)
+  low_freqs2[:,:,2] = fft_convolve(image2[:,:,2], kernel)
+  high_freqs = image2 - low_freqs2
+
+  hybrid_image = low_freqs/2 + high_freqs/2 # Replace with your implementation
+
+  high_freqs = np.clip(high_freqs,-1.0,1.0)
+
+  hybrid_image = np.clip(hybrid_image,0,1)
+
+  return low_freqs, high_freqs, hybrid_image
+
+
+
+#######################################################################################################################
 
 def vis_hybrid_image(hybrid_image):
   """
