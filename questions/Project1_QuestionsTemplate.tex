@@ -95,7 +95,7 @@ The  output of  convolution is a single value for each iteration in the summatio
 \emph{Please use \href{https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.convolve.html}{$scipy.ndimage.convolve$} and \href{https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.correlate.html}{$scipy.ndimage.correlate$} to experiment!}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{A2:} Your answer here.
+\paragraph{A2:} They are basically the same operation ,but the convolution flips the filter firs before performing the multiplication and summation.in other words,correlation and convolution can be used interchangeably with taking into consideration the filter used.
 
 
 
@@ -110,7 +110,7 @@ The  output of  convolution is a single value for each iteration in the summatio
 The low pass filter mainly focuses on leaving non-abrupt changes in the image and the noise can be removed using this. The main methodology of low pass filtering is to mean each pixel with its neighboring pixels this vanishes the effect of non-smooth changes.There are many kinds of low pass filters. There are box filters, Gaussian filters, and more.\\ An example of a low-pass filter kernel is this:
 
 \[
-k = 1/9 *
+k = \frac{1}{9} *
 \begin{bmatrix}
 1 & 1 & 1\\
 1 & 1 & 1\\
