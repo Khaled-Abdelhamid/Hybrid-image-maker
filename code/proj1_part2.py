@@ -5,7 +5,6 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from helpers import vis_hybrid_image, load_image, save_image, my_imfilter, gen_hybrid_image
 from helpers import *
 
 # Before trying to construct hybrid images, it is suggested that you
@@ -16,8 +15,9 @@ from helpers import *
 
 ## Setup
 # Read images and convert to floating point format
-image1 = load_image('../data/dog.bmp')
-image2 = load_image('../data/cat.bmp')
+image1 = load_image('../data/fish.bmp')
+image2 = load_image('../data/submarine.bmp')
+
 
 # display the dog and cat images
 plt.figure(figsize=(3,3))
